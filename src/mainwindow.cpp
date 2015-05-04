@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    dbManager = new DBManager("localhost", 5432, "QPSQL", "Kirill", "Kirill", "", this);
+    dbManager = new DBManager("localhost", 5432, "QPSQL", "postgres", "postgres", "74507", this);
     dbManager->connect();
 
     QTabWidget* tabWidget = new QTabWidget();
@@ -103,7 +103,7 @@ void MainWindow::removePersonButtonClicked() {
     employeeModel->select();
 }
 
-BaseChart* MainWindow::stackradar(int /* img */, const char **imageMap)
+BaseChart* MainWindow::stackradar(int, const char **imageMap)
 {
     // The data for the chart
     double data0[] = {100, 100, 100, 100, 100};
@@ -167,6 +167,7 @@ BaseChart* MainWindow::stackradar(int /* img */, const char **imageMap)
 
     return c;
 }
+
 
 MainWindow::~MainWindow()
 {

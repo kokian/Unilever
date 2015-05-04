@@ -26,13 +26,11 @@ FORMS    += mainwindow.ui
 
 DESTDIR = $$PWD
 
-INCLUDEPATH += /Users/Kirill/Downloads/ChartDirector/include
+INCLUDEPATH += C:\projects\qt\chartdir_cpp_win32\ChartDirector\include
 
 DEFINES += CHARTDIR_HIDE_OBSOLETE
 
-LIBS += -L /Users/Kirill/Downloads/ChartDirector/lib -lchartdir
-
-QMAKE_POST_LINK += cp /Users/Kirill/Downloads/ChartDirector/lib/libchartdir.5.dylib \"$(DESTDIR)\"
+LIBS += C:\projects\qt\chartdir_cpp_win32\ChartDirector\lib\chartdir51.lib
 
 CONFIG -= app_bundle
 CONFIG += c++11

@@ -20,17 +20,27 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
+    QString fileName;
     BaseChart* stackradar(int /* img */, const char **imageMap);
+    QWidget* createView(VIEW_NAME vName);
     ~MainWindow();
 public slots:
     void addPersonButtonClicked();
     void removePersonButtonClicked();
+private slots:
+    void on_action_triggered();
+
 private:
     DBManager* dbManager;
     ParseManager* parseManager;
 
     QSqlTableModel* employeeModel;
     QTableView* tableView;
+
+    QWidget* createEmployeesView();
+    QWidget* createSkillsView();
+    QWidget* createEmployeeCardView();
+    QWidget* createEmployeePlanView();
 
 private:
     Ui::MainWindow *ui;

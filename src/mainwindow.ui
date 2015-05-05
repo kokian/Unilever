@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>545</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -69,10 +69,16 @@
    <property name="text">
     <string>&amp;Открыть</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="action_2">
    <property name="text">
     <string>&amp;Импорт</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
    </property>
   </action>
   <action name="action_3">

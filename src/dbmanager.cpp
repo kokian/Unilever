@@ -41,6 +41,12 @@ bool DBManager::connect() {
         qDebug() << "Cannot open database:" << connection.lastError();
         return false;
     }
+    /*
+    QSqlQuery dropQuery(connection);
+    if (!dropQuery.exec(SQL_DROP_ALL_TABLES)) {
+        qDebug() << "Unable to drop all tables" << dropQuery.lastError();
+    }
+    */
     parseManager = new ParseManager(this, connection);
     for(int i = 0; i < ENT_COUNT; i++) {
         createTable((ENTITY_NAME)i);
@@ -65,6 +71,9 @@ void DBManager::fillTable(ENTITY_NAME ename) {
         break;
     case ENT_SKILLS:
         parseManager->loadSkills();
+        break;
+    case ENT_EMPLOYEES_X_SKILLS:
+        parseManager->loadEmployeeCard();
         break;
     default:
         break;
@@ -110,6 +119,17 @@ void DBManager::createTable(ENTITY_NAME ename) {
         } else {
             break;
         }
+    case ENT_EMPLOYEES_X_SKILLS:
+        if (!query.exec(SQL_CREATE_EMPLOYEES_X_SKILLS_TABLE)) {
+            qDebug() << "Unable to create a table ul_employees_x_skills" << query.lastError();
+            return;
+        } else {
+            if (!query.exec(SQL_CREATE_STATS_TABLE)) {
+                qDebug() << "Unable to create a table ul_stats" << query.lastError();
+                return;
+            }
+            break;
+        }
     default:
         return;
     }
@@ -133,6 +153,12 @@ QSqlTableModel* DBManager::initModel(ENTITY_NAME ename) {
         ((QSqlRelationalTableModel*)model)->setRelation(2, QSqlRelation("ul_skill_levels", "id", "name"));
         ((QSqlRelationalTableModel*)model)->setRelation(3, QSqlRelation("ul_skill_types", "id", "name"));
         ((QSqlRelationalTableModel*)model)->setRelation(5, QSqlRelation("ul_pillars", "id", "name"));
+         model->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
+         model->setHeaderData(1, Qt::Horizontal, QObject::tr("NO"));
+         model->setHeaderData(2, Qt::Horizontal, QObject::tr("LEVEL"));
+         model->setHeaderData(3, Qt::Horizontal, QObject::tr("TYPE"));
+         model->setHeaderData(4, Qt::Horizontal, QObject::tr("DESCRIPTION"));
+         model->setHeaderData(5, Qt::Horizontal, QObject::tr("PILLAR"));
         break;
     default:
         model = new QSqlTableModel(0, connection);

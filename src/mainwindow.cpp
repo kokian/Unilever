@@ -5,6 +5,13 @@
 #include <QLayout>
 #include <QPushButton>
 
+#include <QFileDialog>
+
+#include "qchartviewer.h"
+
+#include "employeeview.h"
+#include "itemcolordelegate.h"
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -12,81 +19,17 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    dbManager = new DBManager("localhost", 5432, "QPSQL", "postgres", "postgres", "74507", this);
+    dbManager = new DBManager("188.166.126.89", 5432, "QPSQL", "postgres", "postgres", "74507", this);
     dbManager->connect();
 
     QTabWidget* tabWidget = new QTabWidget();
     this->setCentralWidget(tabWidget);
 
-    tableView = new QTableView();
-    tableView->setSortingEnabled(true);
-    //tableView->setHorizontalHeaderLabels({"Employee Name(LEG)", "Job Title 4Doc (RUS)", "Position Title", "Department", "HIRE DATE", "ID CODE", "NAME", "Reported by"});
 
-    QWidget* peopleView = new QWidget();
-
-    QLayout* tableLayout = new QHBoxLayout();
-    tableLayout->addWidget(tableView);
-
-    QLayout* buttonLayout = new QHBoxLayout();
-    QPushButton* addPerson = new QPushButton();
-    addPerson->setText(" + ");
-    addPerson->resize(20, 20);
-    addPerson->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    connect (addPerson, SIGNAL( clicked() ), this, SLOT( addPersonButtonClicked() ) );
-    QPushButton* removePerson = new QPushButton();
-    removePerson->setText(" - ");
-    removePerson->resize(20, 20);
-    removePerson->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    connect (removePerson, SIGNAL( clicked() ), this, SLOT( removePersonButtonClicked() ) );
-    buttonLayout->addWidget(addPerson);
-    buttonLayout->addWidget(removePerson);
-    buttonLayout->setAlignment(Qt::AlignLeft);
-
-    QLayout* peopleLayout = new QVBoxLayout();
-    peopleLayout->addItem(buttonLayout);
-    peopleLayout->addItem(tableLayout);
-
-    peopleView->setLayout(peopleLayout);
-
-    employeeModel = dbManager->initModel(ENT_EMPLOYEE);
-    tableView->setModel(employeeModel);
-
-//--------
-
-    QTableView* skillsTableView = new QTableView();
-    skillsTableView->setSortingEnabled(true);
-    QWidget* skillsView = new QWidget();
-
-    QLayout* skillsTableLayout = new QHBoxLayout();
-    skillsTableLayout->addWidget(skillsTableView);
-
-    QLayout* skillsButtonLayout = new QHBoxLayout();
-    QPushButton* addSkill = new QPushButton();
-    addSkill->setText("Добавить");
-    addSkill->resize(100, addSkill->height());
-    QPushButton* removeSkill = new QPushButton();
-    removeSkill->setText("Удалить");
-    removeSkill->resize(100, removeSkill->height());
-    skillsButtonLayout->addWidget(addSkill);
-    skillsButtonLayout->addWidget(removeSkill);
-
-    QLayout* skillsLayout = new QVBoxLayout();
-    skillsLayout->addItem(skillsButtonLayout);
-    skillsLayout->addItem(skillsTableLayout);
-
-    skillsView->setLayout(skillsLayout);
-
-    skillsTableView->setModel(dbManager->initModel(ENT_SKILLS));
-    skillsTableView->setItemDelegate(new QSqlRelationalDelegate(skillsTableView));
-
-    QWidget* personalView = new QWidget();
-    personalView->resize(250, 250);
-    personalView->setStyleSheet("background-color:black;");
-
-
-    tabWidget->addTab(peopleView, "Employees");
-    tabWidget->addTab(skillsView, "Skills");
-    tabWidget->addTab(personalView, "Employee Card");
+    for(int i = 0; i < (int)VIEW_COUNT; i++) {
+        QWidget* wdg = this->createView((VIEW_NAME)i);
+        tabWidget->addTab(wdg,"test");
+    }
 }
 
 void MainWindow::addPersonButtonClicked() {
@@ -106,16 +49,17 @@ void MainWindow::removePersonButtonClicked() {
 BaseChart* MainWindow::stackradar(int, const char **imageMap)
 {
     // The data for the chart
-    double data0[] = {100, 100, 100, 100, 100};
-    double data1[] = {90, 85, 85, 80, 70};
-    double data2[] = {80, 65, 65, 75, 45};
+    double data0[] = {100, 100, 100, 100, 100, 100};
+    double data1[] = {90, 85, 85, 80, 70, 60};
+    double data2[] = {80, 65, 65, 75, 45, 30};
 
     // The labels for the chart
     const char *labels[] = {"Population<*br*><*font=arial.ttf*>6 millions",
         "GDP<*br*><*font=arial.ttf*>120 billions",
         "Export<*br*><*font=arial.ttf*>25 billions",
         "Import<*br*><*font=arial.ttf*>24 billions",
-        "Investments<*br*><*font=arial.ttf*>20 billions"};
+        "Investments<*br*><*font=arial.ttf*>20 billions",
+        "Others<*br*><*font=arial.ttf*>10 billions"};
 
     // Create a PolarChart object of size 480 x 460 pixels. Set background color to
     // silver, with 1 pixel 3D border effect
@@ -172,4 +116,129 @@ BaseChart* MainWindow::stackradar(int, const char **imageMap)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+QWidget* MainWindow::createView(VIEW_NAME vName) {
+    QWidget* view = 0;
+    switch(vName) {
+    case VIEW_EMPLOYEES:
+        view = this->createEmployeesView();
+        break;
+    case VIEW_SKILLS:
+        view = this->createSkillsView();
+        break;
+    case VIEW_EMPLOYEE_CARD:
+        view = this->createEmployeeCardView();
+        break;
+    default:
+        view = new QWidget();
+        break;
+    }
+    return view;
+}
+
+QWidget* MainWindow::createEmployeesView() {
+    QWidget* peopleView = new QWidget();
+    peopleView->setWindowTitle("Employees");
+
+    QTableView* tableView = new QTableView();
+    tableView->setSortingEnabled(true);
+
+    QLayout* tableLayout = new QHBoxLayout();
+    tableLayout->addWidget(tableView);
+
+    QLayout* buttonLayout = new QHBoxLayout();
+    QPushButton* addPerson = new QPushButton();
+    addPerson->setText(" + ");
+    addPerson->resize(20, 20);
+    addPerson->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    connect (addPerson, SIGNAL( clicked() ), this, SLOT( addPersonButtonClicked() ) );
+    QPushButton* removePerson = new QPushButton();
+    removePerson->setText(" - ");
+    removePerson->resize(20, 20);
+    removePerson->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    connect (removePerson, SIGNAL( clicked() ), this, SLOT( removePersonButtonClicked() ) );
+    buttonLayout->addWidget(addPerson);
+    buttonLayout->addWidget(removePerson);
+    buttonLayout->setAlignment(Qt::AlignLeft);
+
+    QLayout* peopleLayout = new QVBoxLayout();
+    peopleLayout->addItem(buttonLayout);
+    peopleLayout->addItem(tableLayout);
+
+    peopleView->setLayout(peopleLayout);
+
+    employeeModel = dbManager->initModel(ENT_EMPLOYEE);
+    tableView->setModel(employeeModel);
+
+    return peopleView;
+}
+
+QWidget* MainWindow::createSkillsView() {
+    QWidget* skillsView = new QWidget();
+    skillsView->setWindowTitle("Skills");
+
+    QTableView* skillsTableView = new QTableView();
+    skillsTableView->setItemDelegate(new ItemColorDelegate());
+
+    skillsTableView->setSortingEnabled(true);
+
+    QLayout* skillsTableLayout = new QHBoxLayout();
+    skillsTableLayout->addWidget(skillsTableView);
+
+    QLayout* skillsButtonLayout = new QHBoxLayout();
+    QPushButton* addSkill = new QPushButton();
+    addSkill->setText("Добавить");
+    addSkill->resize(100, addSkill->height());
+    QPushButton* removeSkill = new QPushButton();
+    removeSkill->setText("Удалить");
+    removeSkill->resize(100, removeSkill->height());
+    skillsButtonLayout->addWidget(addSkill);
+    skillsButtonLayout->addWidget(removeSkill);
+
+    QLayout* skillsLayout = new QVBoxLayout();
+    skillsLayout->addItem(skillsButtonLayout);
+    skillsLayout->addItem(skillsTableLayout);
+
+    skillsView->setLayout(skillsLayout);
+
+    skillsTableView->setModel(dbManager->initModel(ENT_SKILLS));
+    skillsTableView->setItemDelegate(new QSqlRelationalDelegate(skillsTableView));
+    return skillsView;
+}
+
+QWidget* MainWindow::createEmployeeCardView() {
+    return new EmployeeView(dbManager);
+}
+
+QWidget* MainWindow::createEmployeePlanView() {
+    QWidget* personalView = new QWidget();
+    personalView->setWindowTitle("Employee Card");
+
+    personalView->resize(250, 250);
+    personalView->setStyleSheet("background-color:black;");
+    QLayout* chartLayout = new QHBoxLayout();
+    QChartViewer* chartViewer = new QChartViewer();
+    const char *imageMap = 0;
+    chartViewer->setChart(this->stackradar(0, &imageMap));
+    chartViewer->setImageMap(imageMap);
+    chartLayout->addWidget(chartViewer);
+    personalView->setLayout(chartLayout);
+    return personalView;
+}
+
+void MainWindow::on_action_triggered()
+{
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setNameFilter(tr("Excel files (*.xslx)"));
+    dialog.setViewMode(QFileDialog::Detail);
+    QStringList fileNames;
+    if (dialog.exec()) {
+        fileNames = dialog.selectedFiles();
+    }
+    if(fileNames.count() > 0) {
+        this->fileName = fileNames[0];
+    }
+
 }

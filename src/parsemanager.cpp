@@ -1,7 +1,7 @@
 #include "parsemanager.h"
 
 ParseManager::ParseManager(QObject *parent) : QObject(parent) {
-    fileName = "/Users/Kirill/Works/Unilever/employees3.xlsx";
+    fileName = "C:\\projects\\qt\\Unilever\\employees.xlsx";
 }
 
 ParseManager::ParseManager(QObject *parent, QSqlDatabase conn) : ParseManager(parent) {
@@ -53,6 +53,160 @@ bool ParseManager::loadEmployeeList() {
     return true;
 }
 
+bool ParseManager::loadEmployeeCard() {
+    QXlsx::Document* doc = new QXlsx::Document(fileName);
+    QStringList sheets = doc->sheetNames();
+    doc->selectSheet(sheets[2]);
+    QSqlQuery query(conn);
+
+    QString id_code = doc->read(4,3).toString();
+    QString req = "SELECT id FROM ul_employees WHERE LOWER(code)=LOWER('%1')";
+    QString reqP = req.arg(id_code);
+    int employee_id = 0;
+    if (!query.exec(reqP)) {
+        qDebug() << "Unable to select operation" << query.lastError();
+    } else {
+        query.next();
+        employee_id = query.value(0).toInt();
+    }
+
+    this->loadStats(doc, 18, 2, employee_id);
+
+    this->loadSkillTable(doc, 5, 10,employee_id, 1);
+    this->loadSkillTable(doc, 15, 19,employee_id, 2);
+
+    this->loadSkillTable(doc, 15, 28,employee_id, 3);
+    this->loadSkillTable(doc, 15, 37,employee_id, 3);
+    this->loadSkillTable(doc, 15, 46,employee_id, 3);
+    this->loadSkillTable(doc, 15, 55,employee_id, 3);
+    this->loadSkillTable(doc, 15, 64,employee_id, 3);
+
+    this->loadSkillTable(doc, 69, 64,employee_id, 3);
+    this->loadSkillTable(doc, 69, 64,employee_id, 3);
+    this->loadSkillTable(doc, 69, 64,employee_id, 3);
+    this->loadSkillTable(doc, 69, 64,employee_id, 3);
+    this->loadSkillTable(doc, 69, 64,employee_id, 3);
+
+    delete doc;
+    return true;
+}
+
+bool ParseManager::loadStats(QXlsx::Document* doc, int row, int col, int empl_id) {
+    QSqlQuery query(conn);
+    while(doc->read(row,col).toString() != "") {
+        QString category =  doc->read(row,col).toString();
+        double luti =  doc->read(row,col+1).canConvert(QMetaType::Double) ?
+                    doc->read(row,col+1).toDouble() : 0.0;
+        double reactive =  doc->read(row,col+2).canConvert(QMetaType::Double) ?
+                    doc->read(row,col+2).toDouble() : 0.0;
+        double preventive =  doc->read(row,col+3).canConvert(QMetaType::Double) ?
+                    doc->read(row,col+3).toDouble() : 0.0;
+        double proactive =  doc->read(row,col+4).canConvert(QMetaType::Double) ?
+                    doc->read(row,col+4).toDouble() : 0.0;
+        double target =  doc->read(row,col+5).canConvert(QMetaType::Double) ?
+                    doc->read(row,col+5).toDouble() : 0.0;
+        double actual =  doc->read(row,col+6).canConvert(QMetaType::Double) ?
+                    doc->read(row,col+6).toDouble() : 0.0;
+
+        QString strF = "INSERT INTO ul_stats ( "
+                       "employee_id, "
+                       "category, "
+                       "luti, "
+                       "reactive, "
+                       "preventive, "
+                       "proactive, "
+                       "target, "
+                       "actual) "
+                       "VALUES(%1, '%2', %3, %4, %5, %6, %7, %8);";
+        QString str = strF.arg(empl_id)
+                          .arg(category)
+                          .arg(luti)
+                          .arg(reactive)
+                          .arg(preventive)
+                          .arg(proactive)
+                          .arg(target)
+                          .arg(actual);
+        if (!query.exec(str)) {
+            qDebug() << "Unable to make insert operation" << query.lastError();
+        }
+        row++;
+    }
+
+    return true;
+}
+
+bool  ParseManager::loadSkillTable(QXlsx::Document* doc, int row, int col, int empl_id, int unknown_id) {
+    QSqlQuery query(conn);
+    while(doc->read(row,col).toString() != "") {
+        QString skill_name = doc->read(row,col+1).toString();
+        QString target = doc->read(row,col+2).toString();
+
+        qDebug() << row << "  " << skill_name;
+
+        QString req = "SELECT id FROM ul_skills WHERE LOWER(description)=LOWER('%1')";
+        QString reqP = req.arg(skill_name.trimmed());
+        int skill_id = 0;
+        if (!query.exec(reqP)) {
+            qDebug() << "Unable to select operation" << query.lastError();
+        } else {
+            query.next();
+            skill_id = query.value(0).toInt();
+        }
+
+        QString pillar = doc->read(row,col).toString();
+        req = "SELECT id FROM ul_pillars WHERE LOWER(name)=LOWER('%1')";
+        reqP = req.arg(pillar);
+        int pillar_id = 1;
+        if (!query.exec(reqP)) {
+            qDebug() << "Unable to select operation" << query.lastError();
+        } else {
+            query.next();
+            pillar_id = query.value(0).toInt();
+        }
+
+        int mark2015_h2 = doc->read(row,col+3).canConvert(QMetaType::Int) ?
+                    doc->read(row,col+3).toInt() : 0;
+        int mark2015_h1 =  doc->read(row,col+4).canConvert(QMetaType::Int) ?
+                    doc->read(row,col+4).toInt() : 0;
+        int mark2014_h2 =  doc->read(row,col+5).canConvert(QMetaType::Int) ?
+                    doc->read(row,col+5).toInt() : 0;
+        int mark2014_h1 =  doc->read(row,col+6).canConvert(QMetaType::Int) ?
+                    doc->read(row,col+6).toInt() : 0;
+        int mark2013_h2 =  doc->read(row,col+7).canConvert(QMetaType::Int) ?
+                    doc->read(row,col+7).toInt() : 0;
+
+
+
+        QString strF = "INSERT INTO ul_employees_x_skills ( "
+                       "employee_id, "
+                       "skill_id, "
+                       "pillar_id, "
+                       "target, "
+                       "m2013_H2, "
+                       "m2014_H1, "
+                       "m2014_H2, "
+                       "m2015_H1, "
+                       "m2015_H2, "
+                       "unknown_id) "
+                       "VALUES(%1, %2, %3, %4, %5, %6, %7, %8, %9, %10);";
+        QString str = strF.arg(empl_id)
+                          .arg(skill_id)
+                          .arg(pillar_id)
+                          .arg(target)
+                          .arg(mark2015_h2)
+                          .arg(mark2015_h1)
+                          .arg(mark2014_h2)
+                          .arg(mark2014_h1)
+                          .arg(mark2013_h2)
+                          .arg(unknown_id);
+        if (!query.exec(str)) {
+            qDebug() << "Unable to make insert operation" << query.lastError();
+        }
+        row++;
+    }
+    return true;
+}
+
 bool ParseManager::loadSkills() {
     QXlsx::Document* doc = new QXlsx::Document(fileName);
     QStringList sheets = doc->sheetNames();
@@ -60,14 +214,14 @@ bool ParseManager::loadSkills() {
         qDebug() << "Sheet[" << i << "] = " << sheets[i];
     }
     doc->selectSheet(sheets[0]);
-    int row = 4;
+    int row = 2;
     while(doc->read(row,1).toString() != "") {
         QSqlQuery query(conn);
         QString req;
         QString reqP;
         QString number = doc->read(row,1).toString();
         QString level = doc->read(row,2).toString();
-        req = "SELECT id FROM ul_skill_levels WHERE name='%1'";
+        req = "SELECT id FROM ul_skill_levels WHERE LOWER(name)=LOWER('%1')";
         reqP = req.arg(level);
         int level_id = 1;
         if (!query.exec(reqP)) {
@@ -78,7 +232,7 @@ bool ParseManager::loadSkills() {
         }
 
         QString type = doc->read(row,3).toString();
-        req = "SELECT id FROM ul_skill_types WHERE name='%1'";
+        req = "SELECT id FROM ul_skill_types WHERE LOWER(name)=LOWER('%1')";
         reqP = req.arg(type);
         int type_id = 1;
         if (!query.exec(reqP)) {
@@ -91,7 +245,7 @@ bool ParseManager::loadSkills() {
         QString description = doc->read(row,4).toString();
 
         QString pillar = doc->read(row,5).toString();
-        req = "SELECT id FROM ul_pillars WHERE name='%1'";
+        req = "SELECT id FROM ul_pillars WHERE LOWER(name)=LOWER('%1')";
         reqP = req.arg(pillar);
         int pillar_id = 1;
         if (!query.exec(reqP)) {
@@ -133,6 +287,7 @@ bool ParseManager::loadSkills() {
                        "training_coordinator, "
                        "finance_specialist, "
                        "man_ex ) "
+                       //"VALUES(':1', :2, :3, ':4', :5, ':6', ':7', ':8', ':9', ':10', ':11', ':12', ':13', ':14', ':15', ':16', ':17');";
                        "VALUES('%1', %2, %3, '%4', %5, '%6', '%7', '%8', '%9', '%10', '%11', '%12', '%13', '%14', '%15', '%16', '%17');";
 
         QString str = strF.arg(number)
@@ -146,13 +301,37 @@ bool ParseManager::loadSkills() {
                           .arg(technician)
                           .arg(quality_eng)
                           .arg(planning_eng)
+                          .arg(suit)
                           .arg(she_eng)
                           .arg(env_eng)
                           .arg(train_coordinator)
                           .arg(finance_spec)
                           .arg(man_ex);
+        /*
+        query.prepare(strF);
+        query.bindValue(":1", number);
+        query.bindValue(":2", level_id);
+        query.bindValue(":3", type_id);
+        query.bindValue(":4", description);
+        query.bindValue(":5", pillar_id);
+        query.bindValue(":6", prod_proc_eng);
+        query.bindValue(":7", shift_leader);
+        query.bindValue(":8", logist_eng);
+        query.bindValue(":9", technician);
+        query.bindValue(":10", quality_eng);
+        query.bindValue(":11", planning_eng);
+        query.bindValue(":12", suit);
+        query.bindValue(":13", she_eng);
+        query.bindValue(":14", env_eng);
+        query.bindValue(":15", train_coordinator);
+        query.bindValue(":16", finance_spec);
+        query.bindValue(":17", man_ex);
+        */
+
 
         if (!query.exec(str)) {
+            qDebug() << "ROW[" << row << "]='" << doc->read(row,1).toString() << "'";
+            qDebug() << "QUERY: " << query.lastQuery();
             qDebug() << "Unable to make insert operation" << query.lastError();
         }
         row++;
@@ -163,8 +342,8 @@ bool ParseManager::loadSkills() {
 }
 
 bool ParseManager::loadPillars() {
-    int count = 10;
-    QString pillars[10] = {"PM", "AM", "QC", "FI", "PD", "EEM", "CD", "Safety", "Env", "Log"};
+    int count = 11;
+    QString pillars[11] = {"PM", "AM", "QC", "FI", "PD", "EEM", "CD", "S", "Env", "Log", "R&D"};
 
     for(int i = 0; i < count; i++) {
         QSqlQuery query(conn);
@@ -181,7 +360,7 @@ bool ParseManager::loadPillars() {
 
 bool ParseManager::loadSkillLevels() {
     int count = 3;
-    QString pillars[3] = {"BASE", "INTERMEDIA", "ADVANCED"};
+    QString pillars[3] = {"BASE", "INTERMEDIATE", "ADVANCED"};
 
     for(int i = 0; i < count; i++) {
         QSqlQuery query(conn);
@@ -197,8 +376,8 @@ bool ParseManager::loadSkillLevels() {
 }
 
 bool ParseManager::loadSkillTypes() {
-    int count = 2;
-    QString pillars[2] = {"TOOL", "METHOD"};
+    int count = 3;
+    QString pillars[3] = {"TOOL", "METHOD", "SKILL"};
 
     for(int i = 0; i < count; i++) {
         QSqlQuery query(conn);

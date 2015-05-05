@@ -15,14 +15,21 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     dbmanager.cpp \
-    parsemanager.cpp
+    parsemanager.cpp \
+    qchartviewer.cpp \
+    employeeview.cpp \
+    itemcolordelegate.cpp
 
 HEADERS  += mainwindow.h \
     dbmanager.h \
     constants.h \
-    parsemanager.h
+    parsemanager.h \
+    qchartviewer.h \
+    employeeview.h \
+    itemcolordelegate.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    employeecard.ui
 
 DESTDIR = $$PWD
 

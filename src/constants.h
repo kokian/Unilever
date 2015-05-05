@@ -7,12 +7,25 @@ typedef enum {
     ENT_SKILL_LEVELS,
     ENT_SKILL_TYPES,
     ENT_SKILLS,
+    ENT_EMPLOYEES_X_SKILLS,
+    ENT_STATS,
     ENT_COUNT
 } ENTITY_NAME;
+
+typedef enum {
+    VIEW_EMPLOYEES = 0,
+    VIEW_SKILLS,
+    VIEW_EMPLOYEE_CARD,
+    VIEW_EMPLOYEE_PLAN,
+    VIEW_COUNT
+} VIEW_NAME;
 
 static const QString tableNames[2] = {"ul_employees", "ul_skills"};
 
 // SQL
+
+static const QString SQL_DROP_ALL_TABLES = "DROP TABLE ul_employees, ul_skills, ul_pillars, ul_skill_levels, ul_skill_types;";
+
 static const QString SQL_CREATE_EMLOYEES_TABLE = "CREATE TABLE ul_employees ( "
                            "id SERIAL PRIMARY KEY NOT NULL, "
                            "name_leg TEXT, "
@@ -77,17 +90,30 @@ static const QString SQL_CREATE_TRAINING_PLANS_TABLE = "CREATE TABLE ul_training
                            "trainer TEXT "
                            ");";
 
-
-static const QString SQL_CREATE_SKILLS_X_GROUPS_TABLE = "CREATE TABLE ul_skills_x_groups ( "
+static const QString SQL_CREATE_EMPLOYEES_X_SKILLS_TABLE = "CREATE TABLE ul_employees_x_skills ( "
                            "id SERIAL PRIMARY KEY NOT NULL, "
-                           "name_leg TEXT, "
-                           "grade TEXT, "
-                           "job_title TEXT, "
-                           "position_title TEXT, "
-                           "department TEXT, "
-                           "hire_date DATE, "
-                           "code TEXT, "
-                           "name TEXT "
+                           "employee_id INTEGER REFERENCES ul_employees (id), "
+                           "skill_id INTEGER REFERENCES ul_skills (id), "
+                           "pillar_id INTEGER REFERENCES ul_pillars (id), "
+                           "target INTEGER, "
+                           "m2013_H2 INTEGER, "
+                           "m2014_H1 INTEGER, "
+                           "m2014_H2 INTEGER, "
+                           "m2015_H1 INTEGER, "
+                           "m2015_H2 INTEGER, "
+                           "unknown_id INTEGER "
+                           ");";
+
+static const QString SQL_CREATE_STATS_TABLE = "CREATE TABLE ul_stats ( "
+                           "id SERIAL PRIMARY KEY NOT NULL, "
+                           "employee_id INTEGER REFERENCES ul_employees (id), "
+                           "category TEXT, "
+                           "luti REAL, "
+                           "reactive REAL, "
+                           "preventive REAL, "
+                           "proactive REAL, "
+                           "target REAL, "
+                           "actual REAL "
                            ");";
 
 

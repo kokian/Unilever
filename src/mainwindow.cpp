@@ -25,10 +25,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QTabWidget* tabWidget = new QTabWidget();
     this->setCentralWidget(tabWidget);
 
+    QString titles[] = {"People", "Skills", "Personal Card", "test"};
 
     for(int i = 0; i < (int)VIEW_COUNT; i++) {
         QWidget* wdg = this->createView((VIEW_NAME)i);
-        tabWidget->addTab(wdg,"test");
+        tabWidget->addTab(wdg,titles[i]);
     }
 }
 

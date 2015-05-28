@@ -62,8 +62,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action"/>
-   <addaction name="action_2"/>
   </widget>
   <action name="action">
    <property name="text">

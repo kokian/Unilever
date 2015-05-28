@@ -265,8 +265,8 @@ QChartViewer* EmployeeView::drawStatsRadar(QSqlTableModel *model) {
 
 QWidget* EmployeeView::createInfoWidget() {
     QTableWidget* infoTable = new QTableWidget(10, 2);
-    infoTable->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding));
-    infoTable->resize(350, 300);
+    infoTable->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    infoTable->resize(500, 500);
     infoTable->verticalHeader()->hide();
     infoTable->horizontalHeader()->hide();
 
@@ -313,8 +313,8 @@ QWidget* EmployeeView::createStatWidget() {
     model->select();
 
     QTableView* view = new QTableView();
-    view->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding));
-    view->resize(350, 300);
+    view->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    view->resize(500, 500);
     view->setModel(model);
 
     return view;

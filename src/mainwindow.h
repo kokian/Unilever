@@ -24,11 +24,6 @@ public:
     BaseChart* stackradar(int /* img */, const char **imageMap);
     QWidget* createView(VIEW_NAME vName);
     ~MainWindow();
-public slots:
-    void addPersonButtonClicked();
-    void removePersonButtonClicked();
-private slots:
-    void on_action_triggered();
 
 private:
     DBManager* dbManager;
@@ -41,9 +36,16 @@ private:
     QWidget* createSkillsView();
     QWidget* createEmployeeCardView();
     QWidget* createEmployeePlanView();
+    QWidget* createEmployeeRadarView();
 
-private:
     Ui::MainWindow *ui;
+
+public slots:
+    void addPersonButtonClicked();
+    void removePersonButtonClicked();
+
+private slots:
+    void on_action_triggered();
 };
 
 #endif // MAINWINDOW_H

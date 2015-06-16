@@ -25,15 +25,19 @@ public:
 signals:
 
 public slots:
+    void switchcall(const QString&);
 
 private:
     DBManager* dbManager;
 
     QTableView* skillSetTableView;
     QComboBox* changePillarComboBox;
+    QChartViewer* radarWidget;
 
     QWidget* createInfoWidget();
     QWidget* createStatWidget();
+
+    QSqlRelationalTableModel* wcmToolsModel;
 
     //Ui::EmployeeCard* ui;
 };

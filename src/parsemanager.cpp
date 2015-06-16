@@ -91,6 +91,29 @@ bool ParseManager::loadEmployeeCard() {
     return true;
 }
 
+bool ParseManager::loadPositionSkills() {
+    QSqlQuery query(conn);
+
+    QString strF = "INSERT INTO ul_employees (employee_id, skill_id, pillar_id, "
+                   "position1, position2, position3, position4, position5, position6, position7, target) "
+                   "VALUES(%1, %2, %3, %4, %5, %6, %7, %8, %9, %10, %11);";
+    QString str = strF.arg(41)
+                      .arg(43)
+                      .arg(5)
+                      .arg(1)
+                      .arg(2)
+                      .arg(3)
+                      .arg(4)
+                      .arg(5)
+                      .arg(1)
+                      .arg(2)
+                      .arg(5);
+    if (!query.exec(str)) {
+        qDebug() << "Unable to make insert operation" << query.lastError();
+    }
+    return true;
+}
+
 bool ParseManager::loadStats(QXlsx::Document* doc, int row, int col, int empl_id) {
     QSqlQuery query(conn);
     while(doc->read(row,col).toString() != "") {

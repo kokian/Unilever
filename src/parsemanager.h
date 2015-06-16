@@ -20,6 +20,7 @@ public:
     bool loadSkillTypes();
     bool loadSkills();
     bool loadEmployeeCard();
+    bool loadPositionSkills();
 
     ~ParseManager();
 private:

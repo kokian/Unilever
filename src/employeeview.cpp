@@ -15,16 +15,16 @@ EmployeeView::EmployeeView(DBManager *db, QWidget *parent) :
     dbManager = db;
     //ui->setupUi(this);
     QSqlQueryModel* pillarModel = new QSqlQueryModel();
-    pillarModel->setQuery("select name from ui_pillars", dbManager->connection);
+    pillarModel->setQuery("select name from ul_pillars", dbManager->connection);
 
 
-    QSqlRelationalTableModel* wcmToolsModel = new QSqlRelationalTableModel(0, dbManager->connection);
+    wcmToolsModel = new QSqlRelationalTableModel(0, dbManager->connection);
     wcmToolsModel->setTable("ul_employees_x_skills");
     wcmToolsModel->setFilter("employee_id=41");
-    int skill_index = wcmToolsModel->fieldIndex("skill_id");
-    int pillar_index = wcmToolsModel->fieldIndex("pillar_id");
-    wcmToolsModel->setRelation(skill_index, QSqlRelation("ul_skills", "id", "description"));
-    wcmToolsModel->setRelation(pillar_index, QSqlRelation("ul_pillars", "id", "name"));
+    //int skill_index = wcmToolsModel->fieldIndex("skill_id");
+    //int pillar_index = wcmToolsModel->fieldIndex("pillar_id");
+    //wcmToolsModel->setRelation(skill_index, QSqlRelation("ul_skills", "id", "description"));
+    //wcmToolsModel->setRelation(pillar_index, QSqlRelation("ul_pillars", "id", "name"));
 
     wcmToolsModel->select();
     wcmToolsModel->setEditStrategy(QSqlTableModel::OnFieldChange);
@@ -43,12 +43,18 @@ EmployeeView::EmployeeView(DBManager *db, QWidget *parent) :
 
     QLayout* rightVLayout = new QVBoxLayout();
 
-    rightVLayout->addWidget(this->drawRadar(wcmToolsModel));
+    radarWidget = this->drawRadar(wcmToolsModel);
+    rightVLayout->addWidget(radarWidget);
+    //rightVLayout->addWidget(this->drawStatsRadar(statsModel));
 
     changePillarComboBox = new QComboBox();
-    QSqlTableModel *rel = wcmToolsModel->relationModel(pillar_index);
-    changePillarComboBox->setModel(rel);
-    changePillarComboBox->setModelColumn(rel->fieldIndex("name"));
+    //QSqlTableModel *rel = wcmToolsModel->relationModel(pillar_index);
+    //changePillarComboBox->setModel(rel);
+    //changePillarComboBox->setModelColumn(rel->fieldIndex("name"));
+    changePillarComboBox->setModel(pillarModel);
+    connect(changePillarComboBox,SIGNAL(currentIndexChanged(const QString&)),
+            this,SLOT(switchcall(const QString&)));
+
     rightVLayout->addWidget(changePillarComboBox);
 
     skillSetTableView = new QTableView();
@@ -62,6 +68,36 @@ EmployeeView::EmployeeView(DBManager *db, QWidget *parent) :
 
 
     this->setLayout(mainHLayout);
+}
+
+void EmployeeView::switchcall(const QString& text) {
+    if(QString::compare(text, "PM", Qt::CaseInsensitive) == 0) {
+        wcmToolsModel->setFilter("employee_id=41 AND pillar_id=1");
+    } else if (QString::compare(text, "AM", Qt::CaseInsensitive) == 0) {
+        wcmToolsModel->setFilter("employee_id=41 AND pillar_id=2");
+    } else if (QString::compare(text, "QC", Qt::CaseInsensitive) == 0) {
+        wcmToolsModel->setFilter("employee_id=41 AND pillar_id=3");
+    } else if (QString::compare(text, "FI", Qt::CaseInsensitive) == 0) {
+        wcmToolsModel->setFilter("employee_id=41 AND pillar_id=4");
+    } else if (QString::compare(text, "PD", Qt::CaseInsensitive) == 0) {
+        wcmToolsModel->setFilter("employee_id=41 AND pillar_id=5");
+    } else if (QString::compare(text, "EEM", Qt::CaseInsensitive) == 0) {
+        wcmToolsModel->setFilter("employee_id=41 AND pillar_id=6");
+    } else if (QString::compare(text, "CD", Qt::CaseInsensitive) == 0) {
+        wcmToolsModel->setFilter("employee_id=41 AND pillar_id=7");
+    } else if (QString::compare(text, "S", Qt::CaseInsensitive) == 0) {
+        wcmToolsModel->setFilter("employee_id=41 AND pillar_id=8");
+    } else if (QString::compare(text, "Env", Qt::CaseInsensitive) == 0) {
+        wcmToolsModel->setFilter("employee_id=41 AND pillar_id=9");
+    } else if (QString::compare(text, "Log", Qt::CaseInsensitive) == 0) {
+        wcmToolsModel->setFilter("employee_id=41 AND pillar_id=10");
+    } else if (QString::compare(text, "R&D", Qt::CaseInsensitive) == 0) {
+        wcmToolsModel->setFilter("employee_id=41 AND pillar_id=11");
+    }
+    wcmToolsModel->select();
+    const char *imageMap = 0;
+    radarWidget->setChart(this->stackradar(0, &imageMap, wcmToolsModel));
+    radarWidget->setImageMap(imageMap);
 }
 
 BaseChart* EmployeeView::stackradar(int, const char **imageMap, QSqlRelationalTableModel *model)
@@ -266,7 +302,7 @@ QChartViewer* EmployeeView::drawStatsRadar(QSqlTableModel *model) {
 QWidget* EmployeeView::createInfoWidget() {
     QTableWidget* infoTable = new QTableWidget(10, 2);
     infoTable->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    infoTable->resize(500, 500);
+    infoTable->resize(800, 500);
     infoTable->verticalHeader()->hide();
     infoTable->horizontalHeader()->hide();
 

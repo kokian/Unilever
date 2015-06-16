@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QTabWidget* tabWidget = new QTabWidget();
     this->setCentralWidget(tabWidget);
 
-    QString titles[] = {"People", "Skills", "Personal Card", "test"};
+    QString titles[] = {"People", "Skills", "Personal Card", "Personal Radar", "Personal Plan"};
 
     for(int i = 0; i < (int)VIEW_COUNT; i++) {
         QWidget* wdg = this->createView((VIEW_NAME)i);
@@ -131,6 +131,12 @@ QWidget* MainWindow::createView(VIEW_NAME vName) {
     case VIEW_EMPLOYEE_CARD:
         view = this->createEmployeeCardView();
         break;
+    case VIEW_EMPLOYEE_RADAR:
+        view = this->createEmployeeRadarView();
+        break;
+    case VIEW_EMPLOYEE_PLAN:
+        view = this->createEmployeePlanView();
+        break;
     default:
         view = new QWidget();
         break;
@@ -212,12 +218,40 @@ QWidget* MainWindow::createEmployeeCardView() {
     return new EmployeeView(dbManager);
 }
 
-QWidget* MainWindow::createEmployeePlanView() {
+QWidget* MainWindow::createEmployeeRadarView() {
     QWidget* personalView = new QWidget();
-    personalView->setWindowTitle("Employee Card");
+    /*
+    personalView->setWindowTitle("Employee Radar");
 
     personalView->resize(250, 250);
-    personalView->setStyleSheet("background-color:black;");
+    //personalView->setStyleSheet("background-color:black;");
+    QLayout* rightVLayout = new QVBoxLayout();
+
+    rightVLayout->addWidget(this->drawRadar(wcmToolsModel));
+    rightVLayout->addWidget(this->drawStatsRadar(statsModel));
+
+    changePillarComboBox = new QComboBox();
+    QSqlTableModel *rel = wcmToolsModel->relationModel(pillar_index);
+    changePillarComboBox->setModel(rel);
+    changePillarComboBox->setModelColumn(rel->fieldIndex("name"));
+    rightVLayout->addWidget(changePillarComboBox);
+
+    skillSetTableView = new QTableView();
+    skillSetTableView->setModel(wcmToolsModel);
+    skillSetTableView->setColumnHidden(0, true);
+    skillSetTableView->setColumnHidden(1, true);
+    skillSetTableView->setColumnHidden(5, true);
+    rightVLayout->addWidget(skillSetTableView);
+    */
+    return personalView;
+}
+
+QWidget* MainWindow::createEmployeePlanView() {
+    QWidget* personalView = new QWidget();
+    personalView->setWindowTitle("Employee Plan");
+
+    personalView->resize(250, 250);
+    //personalView->setStyleSheet("background-color:black;");
     QLayout* chartLayout = new QHBoxLayout();
     QChartViewer* chartViewer = new QChartViewer();
     const char *imageMap = 0;

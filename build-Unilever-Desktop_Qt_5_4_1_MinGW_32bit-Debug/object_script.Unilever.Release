@@ -6,10 +6,12 @@ INPUT(
 ./release\qchartviewer.o
 ./release\employeeview.o
 ./release\itemcolordelegate.o
+./release\employeelistwidget.o
 ./release\moc_mainwindow.o
 ./release\moc_dbmanager.o
 ./release\moc_parsemanager.o
 ./release\moc_qchartviewer.o
 ./release\moc_employeeview.o
 ./release\moc_itemcolordelegate.o
+./release\moc_employeelistwidget.o
 );

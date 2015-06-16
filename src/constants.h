@@ -8,6 +8,7 @@ typedef enum {
     ENT_SKILL_TYPES,
     ENT_SKILLS,
     ENT_EMPLOYEES_X_SKILLS,
+    ENT_POSITION_TARGET_SKILLS,
     ENT_STATS,
     ENT_COUNT
 } ENTITY_NAME;
@@ -16,6 +17,7 @@ typedef enum {
     VIEW_EMPLOYEES = 0,
     VIEW_SKILLS,
     VIEW_EMPLOYEE_CARD,
+    VIEW_EMPLOYEE_RADAR,
     VIEW_EMPLOYEE_PLAN,
     VIEW_COUNT
 } VIEW_NAME;
@@ -102,6 +104,21 @@ static const QString SQL_CREATE_EMPLOYEES_X_SKILLS_TABLE = "CREATE TABLE ul_empl
                            "m2015_H1 INTEGER, "
                            "m2015_H2 INTEGER, "
                            "unknown_id INTEGER "
+                           ");";
+
+static const QString SQL_CREATE_POSITION_TARGET_SKILLS = "CREATE TABLE ul_position_x_skills ( "
+                           "id SERIAL PRIMARY KEY NOT NULL, "
+                           "employee_id INTEGER REFERENCES ul_employees (id), "
+                           "skill_id INTEGER REFERENCES ul_skills (id), "
+                           "pillar_id INTEGER REFERENCES ul_pillars (id), "
+                           "position1 TEXT, "
+                           "position2 TEXT, "
+                           "position3 TEXT, "
+                           "position4 TEXT, "
+                           "position5 TEXT, "
+                           "position6 TEXT, "
+                           "position7 TEXT, "
+                           "target INTEGER, "
                            ");";
 
 static const QString SQL_CREATE_STATS_TABLE = "CREATE TABLE ul_stats ( "

@@ -75,6 +75,9 @@ void DBManager::fillTable(ENTITY_NAME ename) {
     case ENT_EMPLOYEES_X_SKILLS:
         parseManager->loadEmployeeCard();
         break;
+    case ENT_POSITION_TARGET_SKILLS:
+        parseManager->loadEmployeeCard();
+        break;
     default:
         break;
     }
@@ -120,6 +123,17 @@ void DBManager::createTable(ENTITY_NAME ename) {
             break;
         }
     case ENT_EMPLOYEES_X_SKILLS:
+        if (!query.exec(SQL_CREATE_EMPLOYEES_X_SKILLS_TABLE)) {
+            qDebug() << "Unable to create a table ul_employees_x_skills" << query.lastError();
+            return;
+        } else {
+            if (!query.exec(SQL_CREATE_STATS_TABLE)) {
+                qDebug() << "Unable to create a table ul_stats" << query.lastError();
+                return;
+            }
+            break;
+        }
+    case ENT_POSITION_TARGET_SKILLS:
         if (!query.exec(SQL_CREATE_EMPLOYEES_X_SKILLS_TABLE)) {
             qDebug() << "Unable to create a table ul_employees_x_skills" << query.lastError();
             return;

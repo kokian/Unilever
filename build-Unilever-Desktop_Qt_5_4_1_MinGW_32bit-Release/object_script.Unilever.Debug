@@ -1,0 +1,15 @@
+INPUT(
+./debug\main.o
+./debug\mainwindow.o
+./debug\dbmanager.o
+./debug\parsemanager.o
+./debug\qchartviewer.o
+./debug\employeeview.o
+./debug\itemcolordelegate.o
+./debug\moc_mainwindow.o
+./debug\moc_dbmanager.o
+./debug\moc_parsemanager.o
+./debug\moc_qchartviewer.o
+./debug\moc_employeeview.o
+./debug\moc_itemcolordelegate.o
+);

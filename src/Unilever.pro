@@ -18,7 +18,9 @@ SOURCES += main.cpp\
     parsemanager.cpp \
     qchartviewer.cpp \
     employeeview.cpp \
-    itemcolordelegate.cpp
+    itemcolordelegate.cpp \
+    employeelistwidget.cpp \
+    employeeplanwidget.cpp
 
 HEADERS  += mainwindow.h \
     dbmanager.h \
@@ -26,18 +28,20 @@ HEADERS  += mainwindow.h \
     parsemanager.h \
     qchartviewer.h \
     employeeview.h \
-    itemcolordelegate.h
+    itemcolordelegate.h \
+    employeelistwidget.h \
+    employeeplanwidget.h
 
 FORMS    += mainwindow.ui \
     employeecard.ui
 
-DESTDIR = $$PWD
+#DESTDIR = $$PWD
 
-INCLUDEPATH += C:\projects\qt\chartdir_cpp_win32\ChartDirector\include
+INCLUDEPATH += C:\Users\kka\Documents\GitHub\ChartDirector\include
 
 DEFINES += CHARTDIR_HIDE_OBSOLETE
 
-LIBS += C:\projects\qt\chartdir_cpp_win32\ChartDirector\lib\chartdir51.lib
+LIBS += C:\Users\kka\Documents\GitHub\ChartDirector\lib\chartdir51.lib
 
 CONFIG -= app_bundle
 CONFIG += c++11

@@ -1,7 +1,7 @@
 #include "parsemanager.h"
 
 ParseManager::ParseManager(QObject *parent) : QObject(parent) {
-    fileName = "C:\\projects\\qt\\Unilever\\employees.xlsx";
+    fileName = "..\\employees.xlsx";
 }
 
 ParseManager::ParseManager(QObject *parent, QSqlDatabase conn) : ParseManager(parent) {

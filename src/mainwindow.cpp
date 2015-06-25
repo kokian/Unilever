@@ -10,7 +10,9 @@
 #include "qchartviewer.h"
 
 #include "employeeview.h"
+#include "employeelistwidget.h"
 #include "itemcolordelegate.h"
+#include "employeeplanwidget.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -145,40 +147,7 @@ QWidget* MainWindow::createView(VIEW_NAME vName) {
 }
 
 QWidget* MainWindow::createEmployeesView() {
-    QWidget* peopleView = new QWidget();
-    peopleView->setWindowTitle("Employees");
-
-    QTableView* tableView = new QTableView();
-    tableView->setSortingEnabled(true);
-
-    QLayout* tableLayout = new QHBoxLayout();
-    tableLayout->addWidget(tableView);
-
-    QLayout* buttonLayout = new QHBoxLayout();
-    QPushButton* addPerson = new QPushButton();
-    addPerson->setText(" + ");
-    addPerson->resize(20, 20);
-    addPerson->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    connect (addPerson, SIGNAL( clicked() ), this, SLOT( addPersonButtonClicked() ) );
-    QPushButton* removePerson = new QPushButton();
-    removePerson->setText(" - ");
-    removePerson->resize(20, 20);
-    removePerson->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    connect (removePerson, SIGNAL( clicked() ), this, SLOT( removePersonButtonClicked() ) );
-    buttonLayout->addWidget(addPerson);
-    buttonLayout->addWidget(removePerson);
-    buttonLayout->setAlignment(Qt::AlignLeft);
-
-    QLayout* peopleLayout = new QVBoxLayout();
-    peopleLayout->addItem(buttonLayout);
-    peopleLayout->addItem(tableLayout);
-
-    peopleView->setLayout(peopleLayout);
-
-    employeeModel = dbManager->initModel(ENT_EMPLOYEE);
-    tableView->setModel(employeeModel);
-
-    return peopleView;
+    return new EmployeeListWidget(dbManager, this);
 }
 
 QWidget* MainWindow::createSkillsView() {
@@ -247,19 +216,7 @@ QWidget* MainWindow::createEmployeeRadarView() {
 }
 
 QWidget* MainWindow::createEmployeePlanView() {
-    QWidget* personalView = new QWidget();
-    personalView->setWindowTitle("Employee Plan");
-
-    personalView->resize(250, 250);
-    //personalView->setStyleSheet("background-color:black;");
-    QLayout* chartLayout = new QHBoxLayout();
-    QChartViewer* chartViewer = new QChartViewer();
-    const char *imageMap = 0;
-    chartViewer->setChart(this->stackradar(0, &imageMap));
-    chartViewer->setImageMap(imageMap);
-    chartLayout->addWidget(chartViewer);
-    personalView->setLayout(chartLayout);
-    return personalView;
+    return new EmployeePlanWidget();
 }
 
 void MainWindow::on_action_triggered()

@@ -20,6 +20,7 @@ bool ParseManager::loadEmployeeList() {
     for (int i = 0; i < sheets.count(); i++) {
         qDebug() << "Sheet[" << i << "] = " << sheets[i];
     }
+
     doc->selectSheet(sheets[1]);
     int row = 2;
     while(doc->read(row,1).toString() != "") {
@@ -51,6 +52,44 @@ bool ParseManager::loadEmployeeList() {
 
     delete doc;
     return true;
+}
+
+QStandardItemModel* ParseManager::loadEmployeeListToModel() {
+    QXlsx::Document* doc = new QXlsx::Document(fileName);
+    QStringList sheets = doc->sheetNames();
+    for (int i = 0; i < sheets.count(); i++) {
+        qDebug() << "Sheet[" << i << "] = " << sheets[i];
+    }
+
+    QStandardItemModel* model = new QStandardItemModel();
+    QList<QString> strings;
+    QList<QStandardItem*> items;
+
+    doc->selectSheet(sheets[1]);
+    int row = 2;
+    while(doc->read(row,1).toString() != "") {
+        strings.clear();
+        items.clear();
+        QSqlQuery query(conn);
+        QString name_leg = doc->read(row,2).toString();
+        QString job_title = doc->read(row,3).toString();
+        QString position_title = doc->read(row,4).toString();
+        QString department = doc->read(row,5).toString();
+        QString hire_date = doc->read(row,6).toString();
+        QString code = doc->read(row,7).toString();
+        QString name = doc->read(row,8).toString();
+        QString reported = doc->read(row,9).toString();
+
+        strings << name_leg << job_title << position_title << department << hire_date << code << name << reported;
+        for(int i = 0; i< strings.count(); i++) {
+            items.append(new QStandardItem(strings.at(i)));
+        }
+        model->appendRow(items);
+        row++;
+    }
+
+    delete doc;
+    return model;
 }
 
 bool ParseManager::loadEmployeeCard() {

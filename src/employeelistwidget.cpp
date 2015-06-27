@@ -83,11 +83,15 @@ void EmployeeListWidget::removePersonButtonClicked() {
 
 void EmployeeListWidget::loadListButtonClicked() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open Excel file"), "", tr("Excel Files (*.xlsx)"));
-    //ParseManager* p = new ParseManager(this, db->connection);
-    //p->loadEmployeeList();
+    ParseManager* p = new ParseManager(this, db->connection);
+    p->fileName = fileName;
+    QStandardItemModel* model = p->loadEmployeeListToModel();
+    tableView->setModel(model);
+    /*
     QMessageBox msgBox;
     msgBox.setText("The document has wrong format.");
     msgBox.exec();
+    */
 }
 
 void EmployeeListWidget::saveListButtonClicked() {

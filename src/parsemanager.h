@@ -15,6 +15,7 @@ public:
     QString fileName;
 
     bool loadEmployeeList();
+    QStandardItemModel* loadEmployeeListToModel();
     bool loadPillars();
     bool loadSkillLevels();
     bool loadSkillTypes();

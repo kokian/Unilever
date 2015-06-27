@@ -189,6 +189,7 @@ QWidget* MainWindow::createEmployeeCardView() {
 
 QWidget* MainWindow::createEmployeeRadarView() {
     QWidget* personalView = new QWidget();
+
     /*
     personalView->setWindowTitle("Employee Radar");
 

@@ -37,11 +37,11 @@ FORMS    += mainwindow.ui \
 
 #DESTDIR = $$PWD
 
-INCLUDEPATH += C:\Users\kka\Documents\GitHub\ChartDirector\include
+INCLUDEPATH += E:\SekiraRepo\ChartDirector\include
 
 DEFINES += CHARTDIR_HIDE_OBSOLETE
 
-LIBS += C:\Users\kka\Documents\GitHub\ChartDirector\lib\chartdir51.lib
+LIBS += E:\SekiraRepo\ChartDirector\lib\chartdir60.lib
 
 CONFIG -= app_bundle
 CONFIG += c++11

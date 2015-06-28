@@ -86,7 +86,11 @@ void EmployeeListWidget::loadListButtonClicked() {
     ParseManager* p = new ParseManager(this, db->connection);
     p->fileName = fileName;
     QStandardItemModel* model = p->loadEmployeeListToModel();
+    //test_delegate = new TestComboBoxItemDelegate(&db->connection,this);
     tableView->setModel(model);
+    //tableView->setItemDelegate(test_delegate);
+
+    delete p;
     /*
     QMessageBox msgBox;
     msgBox.setText("The document has wrong format.");

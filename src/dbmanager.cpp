@@ -162,7 +162,7 @@ QSqlTableModel* DBManager::initModel(ENTITY_NAME ename) {
         model->setTable("ul_pillars");
         break;
     case ENT_SKILLS:
-        model = new QSqlRelationalTableModel(0, connection);
+        model = new QSqlRelationalTableModel(this, connection);
         model->setTable("ul_skills");
         ((QSqlRelationalTableModel*)model)->setRelation(2, QSqlRelation("ul_skill_levels", "id", "name"));
         ((QSqlRelationalTableModel*)model)->setRelation(3, QSqlRelation("ul_skill_types", "id", "name"));

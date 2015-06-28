@@ -18,9 +18,11 @@ SOURCES += main.cpp\
     parsemanager.cpp \
     qchartviewer.cpp \
     employeeview.cpp \
-    itemcolordelegate.cpp \
     employeelistwidget.cpp \
-    employeeplanwidget.cpp
+    employeeplanwidget.cpp \
+    testcomboboxitemdelegate.cpp \
+    skillsview.cpp \
+    xlsemployeelistmodel.cpp
 
 HEADERS  += mainwindow.h \
     dbmanager.h \
@@ -28,20 +30,22 @@ HEADERS  += mainwindow.h \
     parsemanager.h \
     qchartviewer.h \
     employeeview.h \
-    itemcolordelegate.h \
     employeelistwidget.h \
-    employeeplanwidget.h
+    employeeplanwidget.h \
+    testcomboboxitemdelegate.h \
+    skillsview.h \
+    xlsemployeelistmodel.h
 
 FORMS    += mainwindow.ui \
     employeecard.ui
 
 #DESTDIR = $$PWD
 
-INCLUDEPATH += E:\SekiraRepo\ChartDirector\include
+INCLUDEPATH += C:\projects\qt\chartdir_cpp_win32\ChartDirector\include
 
 DEFINES += CHARTDIR_HIDE_OBSOLETE
 
-LIBS += E:\SekiraRepo\ChartDirector\lib\chartdir60.lib
+LIBS += C:\projects\qt\chartdir_cpp_win32\ChartDirector\lib\chartdir51.lib
 
 CONFIG -= app_bundle
 CONFIG += c++11

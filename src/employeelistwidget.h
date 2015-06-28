@@ -11,6 +11,7 @@
 #include "dbmanager.h"
 #include "constants.h"
 #include "parsemanager.h"
+#include "testcomboboxitemdelegate.h"
 
 class EmployeeListWidget : public QWidget
 {
@@ -27,6 +28,10 @@ public:
     QSqlTableModel* employeeListModel;
 private:
     DBManager* db;
+    TestComboBoxItemDelegate* test_delegate;
+
+    QSqlQueryModel* dbListModel;
+    QStandardItemModel* importedListMadel;
 signals:
 
 public slots:

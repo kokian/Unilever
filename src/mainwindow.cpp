@@ -11,8 +11,8 @@
 
 #include "employeeview.h"
 #include "employeelistwidget.h"
-#include "itemcolordelegate.h"
 #include "employeeplanwidget.h"
+#include "skillsview.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -151,36 +151,7 @@ QWidget* MainWindow::createEmployeesView() {
 }
 
 QWidget* MainWindow::createSkillsView() {
-    QWidget* skillsView = new QWidget();
-    skillsView->setWindowTitle("Skills");
-
-    QTableView* skillsTableView = new QTableView();
-    skillsTableView->setItemDelegate(new ItemColorDelegate());
-
-    skillsTableView->setSortingEnabled(true);
-
-    QLayout* skillsTableLayout = new QHBoxLayout();
-    skillsTableLayout->addWidget(skillsTableView);
-
-    QLayout* skillsButtonLayout = new QHBoxLayout();
-    QPushButton* addSkill = new QPushButton();
-    addSkill->setText("Добавить");
-    addSkill->resize(100, addSkill->height());
-    QPushButton* removeSkill = new QPushButton();
-    removeSkill->setText("Удалить");
-    removeSkill->resize(100, removeSkill->height());
-    skillsButtonLayout->addWidget(addSkill);
-    skillsButtonLayout->addWidget(removeSkill);
-
-    QLayout* skillsLayout = new QVBoxLayout();
-    skillsLayout->addItem(skillsButtonLayout);
-    skillsLayout->addItem(skillsTableLayout);
-
-    skillsView->setLayout(skillsLayout);
-
-    skillsTableView->setModel(dbManager->initModel(ENT_SKILLS));
-    skillsTableView->setItemDelegate(new QSqlRelationalDelegate(skillsTableView));
-    return skillsView;
+    return new SkillsView(&dbManager->connection, this);
 }
 
 QWidget* MainWindow::createEmployeeCardView() {
@@ -188,32 +159,7 @@ QWidget* MainWindow::createEmployeeCardView() {
 }
 
 QWidget* MainWindow::createEmployeeRadarView() {
-    QWidget* personalView = new QWidget();
-
-    /*
-    personalView->setWindowTitle("Employee Radar");
-
-    personalView->resize(250, 250);
-    //personalView->setStyleSheet("background-color:black;");
-    QLayout* rightVLayout = new QVBoxLayout();
-
-    rightVLayout->addWidget(this->drawRadar(wcmToolsModel));
-    rightVLayout->addWidget(this->drawStatsRadar(statsModel));
-
-    changePillarComboBox = new QComboBox();
-    QSqlTableModel *rel = wcmToolsModel->relationModel(pillar_index);
-    changePillarComboBox->setModel(rel);
-    changePillarComboBox->setModelColumn(rel->fieldIndex("name"));
-    rightVLayout->addWidget(changePillarComboBox);
-
-    skillSetTableView = new QTableView();
-    skillSetTableView->setModel(wcmToolsModel);
-    skillSetTableView->setColumnHidden(0, true);
-    skillSetTableView->setColumnHidden(1, true);
-    skillSetTableView->setColumnHidden(5, true);
-    rightVLayout->addWidget(skillSetTableView);
-    */
-    return personalView;
+    return new QWidget();
 }
 
 QWidget* MainWindow::createEmployeePlanView() {

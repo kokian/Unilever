@@ -1,4 +1,5 @@
 #include "parsemanager.h"
+#include "xlsemployeelistmodel.h"
 
 ParseManager::ParseManager(QObject *parent) : QObject(parent) {
     fileName = "..\\employees.xlsx";
@@ -61,7 +62,7 @@ QStandardItemModel* ParseManager::loadEmployeeListToModel() {
         qDebug() << "Sheet[" << i << "] = " << sheets[i];
     }
 
-    QStandardItemModel* model = new QStandardItemModel();
+    XlsEmployeeListModel* model = new XlsEmployeeListModel(&this->conn);
     QList<QString> strings;
     QList<QStandardItem*> items;
 
@@ -70,7 +71,6 @@ QStandardItemModel* ParseManager::loadEmployeeListToModel() {
     while(doc->read(row,1).toString() != "") {
         strings.clear();
         items.clear();
-        QSqlQuery query(conn);
         QString name_leg = doc->read(row,2).toString();
         QString job_title = doc->read(row,3).toString();
         QString position_title = doc->read(row,4).toString();
